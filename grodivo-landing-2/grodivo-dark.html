@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>grodivo.ai | Mapping Alignment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #12336e;
+    --card: #1c418c;
+    --card-hi: #24509f;
+    --ink: #f4f7fc;
+    --gray-h1: #7b90c2;
+    --body: #b9c5e2;
+    --lime: #e0f556;
+    --lime-deep: #d7ee3e;
+    --chip-bg: rgba(255,255,255,0.09);
+    --frame-border: rgba(255,255,255,0.16);
+    --mono: "JetBrains Mono", monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: var(--navy); }
+
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    background: var(--navy);
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    border-top: 2px solid rgba(255,255,255,0.22);
+  }
+  .header-inner {
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    padding-right: 26px;
+    border-right: 1px solid rgba(255,255,255,0.22);
+  }
+  .brand-logo { height: 30px; width: auto; display: block; }
+  nav.links {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+  }
+  nav.links a {
+    color: #e7ecf7;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 450;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  nav.links a:hover { color: #fff; }
+  .chev { width: 10px; height: 6px; opacity: 0.7; margin-top: 2px; }
+
+  .header-cta {
+    margin-left: auto;
+    display: flex;
+    gap: 12px;
+  }
+  .btn {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 14px 24px;
+    border-radius: 8px;
+    color: var(--ink);
+    transition: filter 0.15s, background 0.15s;
+  }
+  .btn-gray { background: rgba(255,255,255,0.12); color: #f4f7fc; }
+  .btn-gray:hover { background: rgba(255,255,255,0.18); }
+  .btn-lime { background: var(--lime-deep); font-weight: 550; color: #101418; }
+  .btn-lime:hover { filter: brightness(1.04); }
+
+  /* ---------- hero ---------- */
+  .stage {
+    position: relative;
+    background-color: var(--navy);
+  }
+  #dot-field,
+  .dot-field-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  #dot-field canvas { display: block; }
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(1200px 700px at 30% 30%, rgba(18, 51, 110, 0.85), rgba(18, 51, 110, 0.45) 60%, rgba(18, 51, 110, 0.1));
+    pointer-events: none;
+  }
+  .stage-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 110px 40px 90px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--chip-bg);
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.16em;
+    color: #dfe6f5;
+    margin-bottom: 34px;
+  }
+
+  h1 {
+    font-size: clamp(34px, 3.3vw, 68px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    max-width: 1360px;
+  }
+  h1 .dim { color: var(--gray-h1); }
+
+  .sub {
+    margin-top: 26px;
+    font-size: clamp(15px, 1.3vw, 21px);
+    line-height: 1.6;
+    color: var(--body);
+    max-width: 1160px;
+  }
+
+  .hero-actions {
+    margin-top: 40px;
+    display: flex;
+    gap: 14px;
+  }
+  .hero-actions .btn { padding: 17px 30px; font-size: 16.5px; }
+
+  /* ---------- showcase frame ---------- */
+  .showcase { margin-top: 78px; }
+
+  .frame {
+    position: relative;
+    height: 600px;
+    background:
+      radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(180deg, #0e2a5e 0%, #091d43 100%);
+    background-size: 20px 20px, 100% 100%;
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 30px 80px rgba(0, 5, 25, 0.55), inset 0 1px 0 rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 36px 40px;
+    overflow: hidden;
+  }
+
+  /* ===== product-content pipeline animation ===== */
+  .dash { position: relative; height: 100%; }
+
+  .pipe {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;
+    grid-template-rows: 1fr auto 1.5fr;
+    column-gap: 28px;
+  }
+
+  /* connector overlay */
+  .pipe-wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .pipe-wires path { fill: none; stroke-linecap: round; }
+  .pipe-wires .flow {
+    stroke: rgba(255,255,255,0.34);
+    stroke-width: 1.6;
+    stroke-dasharray: 0.1 8;
+    animation: flow 1.3s linear infinite;
+  }
+  .pipe-wires .gold {
+    stroke: rgba(216,201,138,0.85);
+    stroke-width: 1.6;
+    stroke-dasharray: 0.1 8;
+    animation: flow 1.3s linear infinite;
+  }
+  @keyframes flow { to { stroke-dashoffset: -16.2; } }
+
+  /* input / output stacks */
+  .io-stack {
+    grid-row: 2;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .io-stack.inputs { grid-column: 1; }
+  .io-stack.outputs { grid-column: 5; }
+  .io {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-radius: 9px;
+    padding: 9px 11px;
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .io .ic { width: 15px; height: 15px; flex: none; }
+  .io.in {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #e6edf9;
+  }
+  .io.in .ic { color: #c3d0ec; }
+  .io.out-1 { background: #d4e3f6; color: #29394f; }
+  .io.out-2 { background: #e6dcb4; color: #45401f; }
+  .io.out-3 { background: #eef1f7; color: #2b3550; }
+  .io.out-1 .ic, .io.out-2 .ic, .io.out-3 .ic { color: currentColor; opacity: 0.85; }
+
+  /* signal carousel (inputs) — a viewport of ~2.5 rows that slides */
+  .io-label { font-size: 11.5px; color: #9fb0d8; margin: 0 0 7px 4px; }
+  .io-label.ext { margin-top: 26px; }
+  .io-viewport {
+    height: 106px;
+    overflow: hidden;
+    position: relative;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+  }
+  .io-track { display: flex; flex-direction: column; gap: 7px; will-change: transform; }
+  .inputs .io {
+    width: 158px;
+    padding: 6px 11px;
+    font-size: 12px;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, background 0.3s ease;
+  }
+  .inputs .io .ic { color: var(--lime); }
+  .inputs .io.hi { background: var(--card-hi); opacity: 1; }
+  .inputs .io .txt { display: inline-block; }
+
+  /* step cards (the three processing stages) */
+  .step {
+    grid-row: 2;
+    align-self: center;
+    justify-self: stretch;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: #ffffff;
+    color: #1b2540;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+    transition: box-shadow 0.5s ease, transform 0.5s ease;
+  }
+  .step .ic { width: 16px; height: 16px; flex: none; color: #6a74dd; }
+  .step.s1 { grid-column: 2; }
+  .step.s2 { grid-column: 3; }
+  .step.s3 { grid-column: 4; }
+  .step.active {
+    box-shadow: 0 0 0 2px rgba(224,245,86,0.9), 0 0 30px rgba(224,245,86,0.5), 0 8px 22px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+
+  /* top metric annotations */
+  .note {
+    grid-row: 1;
+    align-self: start;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #cdd6a4;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .note.n1 { grid-column: 2; }
+  .note.n2 { grid-column: 3; }
+  .note.n3 { grid-column: 4; }
+  .note.on { opacity: 1; transform: translateY(0); }
+  .note b { color: #e9edcb; font-weight: 600; }
+
+  /* sub-cards below each step */
+  .subcard {
+    grid-row: 3;
+    align-self: start;
+    margin-top: 30px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+  }
+  .subcard.b1 { grid-column: 2; }
+  .subcard.b2 { grid-column: 3; }
+  .subcard.b3 { grid-column: 4; }
+  .subcard.on { opacity: 1; transform: translateY(0); }
+
+  .card-dark {
+    background: rgba(9,24,58,0.66);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 12px 13px;
+    transition: box-shadow 0.5s ease, border-color 0.5s ease;
+  }
+  .subcard.active .card-dark {
+    box-shadow: 0 12px 30px rgba(0,0,0,0.34);
+  }
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #eef2fb;
+  }
+  .card-title .ic { width: 14px; height: 14px; color: #c3d0ec; }
+
+  .code {
+    margin-top: 9px;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.75;
+  }
+  .code .k { color: #8fd0c4; }
+  .code .v { color: #c2cce2; }
+
+  .copy {
+    margin-top: 8px;
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: #aebcda;
+  }
+
+  /* white readiness sub-card */
+  .card-white {
+    background: #fbfcfe;
+    border-radius: 10px;
+    padding: 13px 14px;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+  }
+  .subcard.active .card-white {
+    box-shadow: 0 14px 32px rgba(0,0,0,0.34);
+  }
+  .cw-chips { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .chip-g { background: #e2f0d2; color: #3c6b2e; border-radius: 6px; padding: 5px 9px; font-size: 10.5px; font-weight: 600; }
+  .chip-d { background: #eef0f3; color: #4c5568; border-radius: 6px; padding: 5px 9px; font-size: 10.5px; }
+  .cw-title { margin-top: 10px; font-size: 15.5px; font-weight: 600; color: #101c3f; letter-spacing: -0.01em; }
+  .cw-sub { margin-top: 2px; font-size: 11px; color: #46527c; }
+  .cw-quote {
+    margin-top: 9px;
+    border: 1px solid #dfe2ec;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    font-size: 10.5px;
+    color: #333f66;
+  }
+
+  /* alignment mapping team card rows */
+  .trows { margin-top: 7px; }
+  .trow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .trow:first-child { border-top: none; padding-top: 3px; }
+  .tk {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    color: #8fd0c4;
+    width: 76px;
+    flex: none;
+  }
+  .tv { font-size: 12.5px; color: #eef2fb; font-weight: 500; font-family: "Inter", sans-serif; }
+  .tv .warn { font-style: normal; color: #f0c56a; font-weight: 450; }
+  .avimgs { display: flex; }
+  .avimg {
+    width: 23px; height: 23px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(9,24,58,0.85);
+    margin-left: -7px;
+    background-color: #7a90c2;
+    background-size: cover;
+    background-position: center;
+  }
+  .avimg:first-child { margin-left: 0; }
+  .avimg.a1 { background-color: #d9b8f2; }
+  .avimg.a2 { background-color: #f2a58c; }
+  .avimg.a3 { background-color: #9fc2f0; }
+  .avimg.a4 { background-color: #d9ef5a; }
+  .avimg.a5 { background-color: #a8d8f0; }
+
+  /* ScrollReveal (reactbits-style): words blur and lift in with scroll */
+  .srw {
+    display: inline-block;
+    opacity: 0.12;
+    filter: blur(5px);
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
+  }
+  .srw.on { opacity: 1; filter: blur(0); transform: translateY(0); }
+  .trow .ts { font-size: 10px; color: #8fa2cc; margin-left: 5px; }
+
+  .cursor2 {
+    display: inline-block;
+    width: 6px; height: 11px;
+    margin-left: 2px;
+    background: #9cb07c;
+  }
+
+  /* interactivity: clickable stages, focus dimming, output glow */
+  .step, .subcard { cursor: pointer; }
+  .subcard .card-dark, .subcard .card-white { transition: opacity 0.4s ease, box-shadow 0.5s ease, border-color 0.5s ease; }
+  .io.glow { box-shadow: 0 0 0 2px rgba(224,245,86,0.7), 0 6px 18px rgba(0,0,0,0.28); }
+  /* outputs reveal only in the final phase; gold wires appear with them */
+  .outputs .io { opacity: 0; }
+  .pipe-wires .gold { opacity: 0; }
+  .pipe-wires.show-out .gold { opacity: 1; }
+
+  /* ---------- trust marquee ---------- */
+  .trust {
+    padding: 74px 0 60px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .trust h2 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 23px;
+    font-weight: 500;
+    color: #dfe6f5;
+  }
+  .marquee {
+    margin-top: 52px;
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee::before, .marquee::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 140px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .marquee::before { left: 0; background: linear-gradient(90deg, var(--navy), transparent); }
+  .marquee::after { right: 0; background: linear-gradient(-90deg, var(--navy), transparent); }
+  .marquee-track {
+    display: flex;
+    align-items: center;
+    gap: 96px;
+    width: max-content;
+    padding-right: 96px;
+    will-change: transform;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    color: rgba(244,247,252,0.72);
+    font-size: 19px;
+    font-weight: 550;
+    letter-spacing: -0.01em;
+  }
+  .logo .mark {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.14);
+    color: rgba(244,247,252,0.85);
+    flex: none;
+  }
+  .logo.lg-caps { font-size: 14px; letter-spacing: 0.28em; font-weight: 500; color: rgba(244,247,252,0.6); }
+  .logo.lg-serif { font-family: "Source Serif 4", Georgia, serif; font-weight: 500; }
+  .logo.lg-serif small { font-size: 11px; letter-spacing: 0.3em; margin-left: 6px; color: rgba(244,247,252,0.55); }
+  .logo.lg-badge span {
+    background: rgba(244,247,252,0.9);
+    color: #12336e;
+    border-radius: 999px;
+    padding: 9px 13px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .logo.lg-stack { font-size: 15px; line-height: 1.05; font-weight: 650; text-align: right; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1280px) {
+    .pipe { grid-template-columns: auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto; column-gap: 18px; }
+    .frame { padding: 30px 28px; }
+    .step, .io { font-size: 11.5px; }
+  }
+  @media (max-width: 1100px) {
+    nav.links { display: none; }
+    .frame { height: auto; padding: 30px 26px; }
+    .pipe-wires { display: none; }
+    .pipe {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .io-stack { flex-direction: row; flex-wrap: wrap; }
+    .note { opacity: 1; transform: none; }
+    .subcard { opacity: 1; transform: none; margin-top: 0; }
+    .subcard, .note, .step, .io-stack { grid-column: auto !important; }
+  }
+  @media (max-width: 700px) {
+    .header-inner { padding: 14px 20px; }
+    .stage-inner { padding: 64px 20px 60px; }
+    .hero-actions { flex-wrap: wrap; }
+    .frame { padding: 22px 16px; }
+    .trust { padding: 54px 0 44px; }
+    .marquee-track { gap: 56px; padding-right: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="brand" href="#">
+      <img class="brand-logo" src="photos/logo.webp" alt="grodivo.ai" />
+    </a>
+    <nav class="links">
+      <a href="#">Our Platform</a>
+      <a href="#">Mapping Alignment
+        <svg class="chev" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="#">Solutions
+        <svg class="chev" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="#">About
+        <svg class="chev" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-lime" href="#">Book a Demo</a>
+    </div>
+  </div>
+</header>
+
+<div class="stage">
+  <div id="dot-field"></div>
+  <div class="stage-inner">
+
+    <h1 class="hero-el">Your strategy is aligned. <span class="dim">The layer below it isn't.</span></h1>
+
+    <p class="sub hero-el">Grodivo measures how your teams actually work, then shows you exactly where execution breaks, what it costs, and how long it delays your deal.</p>
+
+    <div class="hero-actions hero-el">
+      <a class="btn btn-lime" href="#">Book a Demo</a>
+    </div>
+
+    <div class="showcase hero-el">
+      <div class="frame">
+        <div class="dash">
+          <svg class="pipe-wires" id="wires" aria-hidden="true"></svg>
+
+          <div class="pipe">
+
+            <!-- inputs: vertically sliding signal carousel -->
+            <div class="io-stack inputs" id="inputs">
+              <div class="io-label">Internal signals</div>
+              <div class="io-viewport"><div class="io-track" id="int-track"></div></div>
+              <div class="io-label ext">External signals</div>
+              <div class="io-viewport"><div class="io-track" id="ext-track"></div></div>
+            </div>
+
+            <!-- top annotations -->
+            <div class="note n1"><b>92</b> composite alignment score</div>
+            <div class="note n2"><b>$310k / quarter</b> alignment tax if unmanaged</div>
+            <div class="note n3"><b>5 TAP profiles</b> active in mapping</div>
+
+            <!-- processing steps -->
+            <div class="step s1" data-step>
+              <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l8 3v6c0 5-3.4 8.9-8 10.5C7.4 20.4 4 16.5 4 11.5v-6l8-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.8 12l2.3 2.3 4.2-4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Execution Readiness
+            </div>
+            <div class="step s2" data-step>
+              <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M13 3l1.6 5.4L20 10l-5.4 1.6L13 17l-1.6-5.4L6 10l5.4-1.6L13 3z" fill="currentColor"/><path d="M6 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z" fill="currentColor"/></svg>
+              TAP Insights
+            </div>
+            <div class="step s3" data-step>
+              <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M3 13l9 5 9-5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+              Alignment Mapping
+            </div>
+
+            <!-- sub-cards -->
+            <div class="subcard b1" data-sub>
+              <div class="card-white">
+                <div class="cw-chips">
+                  <span class="chip-g">92 Alignment Score</span>
+                  <span class="chip-d">Wed, Jul 29</span>
+                </div>
+                <div class="cw-title">Platform Team</div>
+                <div class="cw-sub">Execution readiness</div>
+                <div class="cw-quote">Aligned to strategy - synergy captured sooner</div>
+              </div>
+            </div>
+
+            <div class="subcard b2" data-sub>
+              <div class="card-dark">
+                <div class="card-title">
+                  <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M13 3l1.6 5.4L20 10l-5.4 1.6L13 17l-1.6-5.4L6 10l5.4-1.6L13 3z" fill="currentColor"/><path d="M6 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z" fill="currentColor"/></svg>
+                  TAP Insights
+                </div>
+                <p class="copy"><span id="ins-type"></span><span class="cursor2"></span></p>
+              </div>
+            </div>
+
+            <div class="subcard b3" data-sub>
+              <div class="card-dark">
+                <div class="card-title">
+                  <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 13l9 5 9-5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  Alignment Mapping
+                </div>
+                <div class="trows">
+                  <div class="trow">
+                    <span class="tk">TEAM</span>
+                    <span class="tv">Design <em class="warn">- At Risk</em></span>
+                  </div>
+                  <div class="trow">
+                    <span class="tk">LEVEL</span>
+                    <span class="tv">Developer's <em class="warn">- Action Required</em></span>
+                  </div>
+                  <div class="trow">
+                    <span class="tk">INDIVIDUAL</span>
+                    <span class="avimgs">
+                      <i class="avimg a1" style="background-image:url('photos/img-1.png')"></i>
+                      <i class="avimg a2" style="background-image:url('photos/img-2.png')"></i>
+                      <i class="avimg a3" style="background-image:url('photos/img-3.png')"></i>
+                      <i class="avimg a4" style="background-image:url('photos/img-4.png')"></i>
+                      <i class="avimg a5" style="background-image:url('photos/img-5.png')"></i>
+                    </span>
+                    <span class="ts">TAP profiles active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- outputs -->
+            <div class="io-stack outputs" id="outputs">
+              <div class="io out-1">
+                <svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.5v9M9.5 14.2c.5 1 1.4 1.6 2.5 1.6 1.4 0 2.5-.8 2.5-2s-1-1.7-2.5-2c-1.5-.3-2.5-.8-2.5-2s1.1-2 2.5-2c1.1 0 2 .6 2.5 1.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span class="olabel" data-out="1">$480k value captured</span>
+              </div>
+              <div class="io out-2">
+                <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M3.5 17l5-5 4 3 8-8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6.5h5.5V12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="olabel" data-out="2">+12% revenue lift</span>
+              </div>
+              <div class="io out-3">
+                <svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M8 12.5l2.7 2.7L16.5 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="olabel" data-out="3">96% aligned to strategy</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- trust marquee -->
+<section class="trust">
+  <h2>Trusted by 100+ companies across industries</h2>
+  <div class="marquee">
+    <div class="marquee-track" id="marquee-track">
+      <span class="logo lg-caps">C O R T L A N D</span>
+      <span class="logo"><span class="mark"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M3 9c2-3 6-3 8 0" stroke="currentColor" stroke-width="1.6"/></svg></span>CommunityTax</span>
+      <span class="logo"><span class="mark"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="7" r="2.4" fill="currentColor"/></svg></span>Varsity Tutors</span>
+      <span class="logo lg-stack">United<br/>Way</span>
+      <span class="logo lg-badge"><span>HRS</span></span>
+      <span class="logo lg-serif"><span class="mark"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 2.5L8.4 7 7 11.5 5.6 7 7 2.5z" fill="currentColor"/></svg></span>COMPASS<small>WORKING CAPITAL</small></span>
+      <span class="logo lg-serif">Alleviate<small>TAX</small></span>
+      <span class="logo" style="font-weight:750;">VA</span>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+  // Alignment pipeline: connector wires + traveling-glow reveal
+  (function () {
+    var dash = document.querySelector(".dash");
+    var svg = document.getElementById("wires");
+    var inputs = document.getElementById("inputs");
+    var outputs = document.getElementById("outputs");
+    if (!dash || !svg) return;
+
+    var steps = Array.prototype.slice.call(document.querySelectorAll(".pipe .step"));
+    var subs = Array.prototype.slice.call(document.querySelectorAll(".pipe .subcard"));
+    var notes = Array.prototype.slice.call(document.querySelectorAll(".pipe .note"));
+
+    // ----- rotating signal carousel in the input stack -----
+    var ICONS = {
+      clip: '<svg class="ic" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="17" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M9 2.8h6v3.4H9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 13l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      doc: '<svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M6 2.8h8.5L19 7.3V21H6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 11h6M9 14.5h6M9 18h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+      chat: '<svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M4 6.5C4 5.1 5.1 4 6.5 4h11C18.9 4 20 5.1 20 6.5v8c0 1.4-1.1 2.5-2.5 2.5H10l-4.5 3.8c-.6.5-1.5.1-1.5-.7V6.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+      people: '<svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 19c.6-3 2.8-5 5.5-5s4.9 2 5.5 5M14.5 14.6c2 .4 3.6 2 4 4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+      lin: '<svg class="ic" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="9.5" width="3.6" height="11" rx="0.8" stroke="currentColor" stroke-width="1.7"/><circle cx="5.3" cy="5.3" r="1.9" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 20.5v-11h3.4v1.6c.8-1.1 2-1.9 3.6-1.9 2.6 0 3.9 1.7 3.9 4.6v6.7h-3.6v-6c0-1.4-.6-2.3-1.8-2.3-1.3 0-2 .9-2 2.3v6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+      target: '<svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>',
+      trend: '<svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M3.5 17l5-5 4 3 8-8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6.5h5.5V12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      bars: '<svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 20v-7M12 20V6.5M17.5 20v-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+    };
+    var INTERNAL = [
+      { t: "TAP assessments", i: "clip" },
+      { t: "Strategy docs", i: "doc" },
+      { t: "Slack channels", i: "chat" },
+      { t: "Culture docs", i: "people" }
+    ];
+    var EXTERNAL = [
+      { t: "LinkedIn", i: "lin" },
+      { t: "Competitors", i: "target" },
+      { t: "Market data", i: "trend" },
+      { t: "Analyst reports", i: "bars" }
+    ];
+    // Build a sliding carousel: the track holds the list twice so it can
+    // scroll upward forever; the row nearest the viewport centre is lit.
+    function chipHTML(item) {
+      return '<div class="io in">' + ICONS[item.i] +
+             '<span class="txt">' + item.t + "</span></div>";
+    }
+    function makeCarousel(trackId, list) {
+      var track = document.getElementById(trackId);
+      if (!track) return;
+      // triple the list so there is always buffer above and below the
+      // viewport — no gaps appear at the wrap point
+      track.innerHTML = list.concat(list).concat(list).map(chipHTML).join("");
+      var rows = Array.prototype.slice.call(track.children);
+      var vp = track.parentElement;
+      // Stepped scroll: exactly three rows sit still for a beat, then the
+      // strip eases up by one row and the next enters — so three items are
+      // always fully visible, and the motion is smooth with no load jerk.
+      var rowH = 44, idx = list.length, started = false;
+      function measureH() { if (rows.length > 1) rowH = rows[1].offsetTop - rows[0].offsetTop; }
+      function place(y) { track.style.transform = "translateY(" + y.toFixed(2) + "px)"; }
+      function highlight() {
+        rows.forEach(function (el, r) { el.classList.toggle("hi", r === idx + 1); });
+      }
+
+      function loop() {
+        setTimeout(function () {
+          var y0 = -idx * rowH, y1 = y0 - rowH, t0 = Date.now(), dur = 520;
+          (function tw() {
+            var t = Math.min(1, (Date.now() - t0) / dur);
+            var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // easeInOutCubic
+            place(y0 + (y1 - y0) * e);
+            if (t < 1) { setTimeout(tw, 16); return; }
+            idx++;
+            if (idx >= list.length * 2) { idx -= list.length; place(-idx * rowH); } // seamless wrap
+            highlight();
+            loop();
+          })();
+        }, 1600); // hold time with three rows steady
+      }
+
+      function begin() {
+        if (started) return;
+        started = true;
+        measureH();
+        idx = list.length;          // sit on the middle copy
+        place(-idx * rowH);
+        highlight();
+        loop();
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(begin);
+        setTimeout(begin, 500);     // fallback if fonts.ready never resolves
+      } else {
+        setTimeout(begin, 200);
+      }
+      window.addEventListener("resize", function () {
+        measureH();
+        if (started) place(-idx * rowH);
+      });
+    }
+    makeCarousel("int-track", INTERNAL);
+    makeCarousel("ext-track", EXTERNAL);
+
+    function rel(el, origin) {
+      var b = el.getBoundingClientRect();
+      return {
+        l: b.left - origin.left, r: b.right - origin.left,
+        t: b.top - origin.top,  bo: b.bottom - origin.top,
+        cx: (b.left + b.right) / 2 - origin.left,
+        cy: (b.top + b.bottom) / 2 - origin.top
+      };
+    }
+
+    // Build the connector paths from the live element geometry, so the
+    // marching-dot lines stay pixel-accurate at any width.
+    function buildWires() {
+      var O = dash.getBoundingClientRect();
+      svg.setAttribute("viewBox", "0 0 " + O.width + " " + O.height);
+      svg.setAttribute("width", O.width);
+      svg.setAttribute("height", O.height);
+
+      var paths = "";
+      var ins = rel(inputs, O);
+      var s = steps.map(function (el) { return rel(el, O); });
+      var n = notes.map(function (el) { return rel(el, O); });
+      var sb = subs.map(function (el) { return rel(el, O); });
+
+      // the signal stack fans into step 1 with curved dotted lines,
+      // like the reference recording's signals -> hub connection
+      var inb = rel(inputs, O);
+      var fanN = 5;
+      for (var c = 0; c < fanN; c++) {
+        var fy = inb.t + (inb.bo - inb.t) * (0.12 + 0.76 * c / (fanN - 1));
+        var cmx0 = (inb.r + s[0].l) / 2;
+        paths += '<path class="flow" d="M' + inb.r + ' ' + fy +
+                 ' C' + cmx0 + ' ' + fy + ', ' + cmx0 + ' ' + s[0].cy +
+                 ', ' + s[0].l + ' ' + s[0].cy + '"/>';
+      }
+
+      // per-column vertical dotted line: note -> step -> sub
+      for (var i = 0; i < steps.length; i++) {
+        paths += '<path class="flow" d="M' + s[i].cx + ' ' + n[i].bo +
+                 ' V' + s[i].t + '"/>';
+        paths += '<path class="flow" d="M' + s[i].cx + ' ' + s[i].bo +
+                 ' V' + sb[i].t + '"/>';
+      }
+
+      // step 3 -> each output (gold curves)
+      var out = outputs.children;
+      var last = s[s.length - 1];
+      for (var j = 0; j < out.length; j++) {
+        var o = rel(out[j], O);
+        var cmx = (last.r + o.l) / 2;
+        paths += '<path class="gold" d="M' + last.r + ' ' + last.cy +
+                 ' C' + cmx + ' ' + last.cy + ', ' + cmx + ' ' + o.cy +
+                 ', ' + o.l + ' ' + o.cy + '"/>';
+      }
+      svg.innerHTML = paths;
+    }
+
+    // Reveal a note/sub-card once with a self-driven tween that writes
+    // inline opacity directly, so it lands regardless of the host's
+    // animation-frame timing.
+    function reveal(el) {
+      if (el.dataset.shown) return;
+      el.dataset.shown = "1";
+      el.classList.add("on");
+      el.style.transition = "none";
+      var t0 = Date.now();
+      (function step() {
+        var t = Math.min(1, (Date.now() - t0) / 450);
+        var e = 1 - Math.pow(1 - t, 3); // easeOutCubic
+        el.style.opacity = String(e);
+        el.style.transform = "translateY(" + (7 * (1 - e)).toFixed(2) + "px)";
+        if (t < 1) setTimeout(step, 16);
+        else el.style.transform = "translateY(0)";
+      })();
+    }
+
+    // typewriter for the TAP Insights sub-card, restartable per loop
+    var typeStarted = false, typeToken = 0;
+    function typeInsights() {
+      if (typeStarted) return;
+      typeStarted = true;
+      var el = document.getElementById("ins-type");
+      if (!el) return;
+      var text = "Dept A ⇔ Dept B: strategy-execution gap widening. Alignment tax: $310k / quarter if unmanaged. Map Your Gap™: align roadmap owners now.";
+      var i = 0, my = ++typeToken;
+      (function t() {
+        if (my !== typeToken) return;
+        if (i <= text.length) { el.textContent = text.slice(0, i); i++; setTimeout(t, 22); }
+      })();
+    }
+    function resetTyping() {
+      typeToken++;
+      typeStarted = false;
+      var el = document.getElementById("ins-type");
+      if (el) el.textContent = "";
+    }
+
+    // Dynamic outcome data — re-rolled every run so the outputs are
+    // never static. rint(a,b) picks an inclusive integer in [a,b].
+    function rint(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+    function rollOutputs() {
+      var labels = {
+        1: "$" + rint(42, 56) * 10 + "k value captured",
+        2: "+" + rint(8, 17) + "% revenue lift",
+        3: rint(88, 96) + "% aligned to strategy"
+      };
+      Object.keys(labels).forEach(function (n) {
+        var el = document.querySelector('.olabel[data-out="' + n + '"]');
+        if (el) el.textContent = labels[n];
+      });
+    }
+
+    // fade an output chip in with its (already rolled) value
+    function revealOut(el) {
+      var t0 = Date.now();
+      (function step() {
+        var t = Math.min(1, (Date.now() - t0) / 420);
+        var e = 1 - Math.pow(1 - t, 3);
+        el.style.opacity = String(e);
+        el.style.transform = "translateX(" + (-8 * (1 - e)).toFixed(2) + "px)";
+        if (t < 1) setTimeout(step, 16);
+        else el.style.transform = "translateX(0)";
+      })();
+    }
+
+    // Strict left-to-right flow. Phases 0..2 light each stage in turn and
+    // reveal its sub-card; phase 3 fans out to the dynamic outputs. Nothing
+    // is ever dimmed — every revealed card stays fully enabled.
+    var OUT_PHASE = steps.length;      // == 3
+    var cur = -1, timer = null;
+    function setStage(i) {
+      cur = i;
+      var lit = Math.min(i, steps.length - 1);
+      // in the output phase every stage stays lit (the run is complete)
+      steps.forEach(function (el, j) {
+        el.classList.toggle("active", i >= OUT_PHASE ? true : j === i);
+      });
+      subs.forEach(function (el, j) {
+        if (j <= lit) reveal(el);
+        el.classList.toggle("active", j === lit);
+      });
+      notes.forEach(function (el, j) { if (j <= lit) reveal(el); });
+      if (i === 1) typeInsights();
+
+      if (i >= OUT_PHASE) {
+        svg.classList.add("show-out");
+        var outs = outputs.children;
+        for (var j = 0; j < outs.length; j++) {
+          outs[j].classList.add("glow");
+          revealOut(outs[j]);
+        }
+      }
+    }
+
+    // fade a revealed element back out (used when the loop restarts)
+    function hideEl(el) {
+      delete el.dataset.shown;
+      el.classList.remove("active");
+      var t0 = Date.now();
+      var from = parseFloat(el.style.opacity || "1");
+      (function step() {
+        var t = Math.min(1, (Date.now() - t0) / 300);
+        var e = 1 - Math.pow(1 - t, 3);
+        el.style.opacity = (from * (1 - e)).toFixed(3);
+        el.style.transform = "translateY(" + (6 * e).toFixed(2) + "px)";
+        if (t < 1) setTimeout(step, 16);
+      })();
+    }
+
+    // the run loops: after the output phase everything clears, the
+    // outputs re-roll, and the flow starts again from the left
+    function resetRun() {
+      steps.forEach(function (el) { el.classList.remove("active"); });
+      subs.forEach(hideEl);
+      notes.forEach(hideEl);
+      svg.classList.remove("show-out");
+      var outs = outputs.children;
+      for (var j = 0; j < outs.length; j++) {
+        outs[j].classList.remove("glow");
+        outs[j].style.opacity = "0";
+      }
+      resetTyping();
+      rollOutputs();
+    }
+
+    function advance() {
+      var next = cur + 1;
+      if (next > OUT_PHASE) {
+        resetRun();
+        cur = -1;
+        return;
+      }
+      setStage(next);
+    }
+    // per-phase pacing: the completed output phase lingers so the final
+    // "everything enabled" state is clearly readable before it loops
+    function phaseDelay() { return cur >= OUT_PHASE ? 4400 : 2500; }
+    function scheduleNext() {
+      clearTimeout(timer);
+      timer = setTimeout(function () { advance(); scheduleNext(); }, phaseDelay());
+    }
+    function restartTimer() { scheduleNext(); }
+
+    // click a step or its card to jump the flow there; auto-cycle resumes
+    steps.forEach(function (el, i) {
+      el.addEventListener("click", function () { setStage(i); restartTimer(); });
+    });
+    subs.forEach(function (el, i) {
+      el.addEventListener("click", function () { setStage(i); restartTimer(); });
+    });
+
+    function init() {
+      buildWires();
+      rollOutputs();
+      advance();
+      restartTimer();
+    }
+
+    if (document.readyState === "complete") init();
+    else window.addEventListener("load", init);
+    window.addEventListener("resize", buildWires);
+    // rebuild once fonts/layout settle
+    setTimeout(buildWires, 400);
+    setTimeout(buildWires, 1200);
+  })();
+  // Trust marquee.
+  // All loops are setTimeout-driven so they keep animating even where
+  // the host throttles requestAnimationFrame; ~30fps everywhere.
+  (function () {
+    var TICK = 33;
+
+    // --- marquee: seamless infinite scroll ---
+    var track = document.getElementById("marquee-track");
+    if (track) {
+      track.innerHTML += track.innerHTML; // duplicate for wraparound
+      var mx = 0, half = 0;
+      function measure() { half = track.scrollWidth / 2; }
+      measure();
+      window.addEventListener("resize", measure);
+      (function scrollTick() {
+        mx -= 0.55;
+        if (half > 0 && -mx >= half) mx += half;
+        track.style.transform = "translateX(" + mx.toFixed(2) + "px)";
+        setTimeout(scrollTick, TICK);
+      })();
+    }
+
+  })();
+</script>
+
+<script>
+  // ScrollReveal, adapted from reactbits.dev: split target text into
+  // words; each word un-blurs as scroll progress passes its position.
+  // Driven by scroll events plus a poll so it works where rAF stalls.
+  (function () {
+    var targets = ["h1", ".sub"];
+    var revealEls = [];
+
+    function splitWords(el) {
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      var nodes = [];
+      while (walker.nextNode()) {
+        if (walker.currentNode.textContent.trim()) nodes.push(walker.currentNode);
+      }
+      nodes.forEach(function (node) {
+        var frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          var w = document.createElement("span");
+          w.className = "srw";
+          w.textContent = part;
+          frag.appendChild(w);
+        });
+        node.parentNode.replaceChild(frag, node);
+      });
+      return Array.prototype.slice.call(el.querySelectorAll(".srw"));
+    }
+
+    targets.forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (el) revealEls.push({ el: el, words: splitWords(el) });
+    });
+
+    function update() {
+      var vh = window.innerHeight;
+      revealEls.forEach(function (r) {
+        var b = r.el.getBoundingClientRect();
+        var start = vh * 0.95;
+        var end = vh * 0.4;
+        var p = (start - b.top) / (start - end);
+        p = Math.max(0, Math.min(1.15, p));
+        var n = r.words.length;
+        r.words.forEach(function (w, j) {
+          w.classList.toggle("on", p * (n + 1) >= j + 1);
+        });
+      });
+    }
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+    setInterval(update, 250);
+  })();
+</script>
+
+<script type="module">
+  // Dot Field hero background — adapted from reactbits.dev "Dot Grid",
+  // rendered with React and faded in / orchestrated with Framer Motion.
+  import React, { useRef, useEffect } from "https://esm.sh/react@18.3.1";
+  import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
+  import { motion, animate, stagger } from "https://esm.sh/framer-motion@11.11.17?deps=react@18.3.1,react-dom@18.3.1";
+  import htm from "https://esm.sh/htm@3.1.1";
+
+  const html = htm.bind(React.createElement);
+
+  // expose Framer Motion's imperative animate() to the pipeline script below
+  window.__animate = animate;
+  window.dispatchEvent(new Event("fm-ready"));
+
+  const GAP = 26;        // spacing between dots
+  const BASE_R = 1.05;   // resting dot radius
+  const PROX = 140;      // cursor influence radius
+  const SHOCK_R = 280;   // click shockwave radius
+
+  function DotField() {
+    const wrapRef = useRef(null);
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+      const wrap = wrapRef.current;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      const mouse = { x: -9999, y: -9999 };
+      let dots = [];
+      let raf, fallbackTimer, stopped = false;
+
+      function build() {
+        const rect = wrap.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        canvas.style.width = rect.width + "px";
+        canvas.style.height = rect.height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        dots = [];
+        for (let y = GAP / 2; y < rect.height; y += GAP) {
+          for (let x = GAP / 2; x < rect.width; x += GAP) {
+            dots.push({ ox: x, oy: y, x, y, vx: 0, vy: 0 });
+          }
+        }
+      }
+
+      function frame() {
+        const rect = wrap.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        for (const d of dots) {
+          const dx = d.x - mouse.x;
+          const dy = d.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          let f = 0;
+          if (dist < PROX) {
+            f = 1 - dist / PROX;
+            const ang = Math.atan2(dy, dx);
+            d.vx += Math.cos(ang) * f * 0.65;
+            d.vy += Math.sin(ang) * f * 0.65;
+          }
+          d.vx += (d.ox - d.x) * 0.06;
+          d.vy += (d.oy - d.y) * 0.06;
+          d.vx *= 0.86;
+          d.vy *= 0.86;
+          d.x += d.vx;
+          d.y += d.vy;
+
+          ctx.fillStyle = f > 0.02
+            ? `rgba(224, 245, 86, ${0.25 + f * 0.65})`
+            : "rgba(255, 255, 255, 0.16)";
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, BASE_R + f * 1.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // rAF drives the loop when available; setTimeout keeps it alive
+      // in environments where rAF is throttled or suspended.
+      function schedule() {
+        if (stopped) return;
+        let ran = false;
+        const run = () => {
+          if (ran || stopped) return;
+          ran = true;
+          clearTimeout(fallbackTimer);
+          frame();
+          schedule();
+        };
+        fallbackTimer = setTimeout(run, 33);
+        raf = requestAnimationFrame(run);
+      }
+
+      function onMove(e) {
+        const rect = wrap.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      }
+      function onLeave() { mouse.x = -9999; mouse.y = -9999; }
+      function onDown(e) {
+        const rect = wrap.getBoundingClientRect();
+        const cx = e.clientX - rect.left;
+        const cy = e.clientY - rect.top;
+        for (const d of dots) {
+          const dx = d.x - cx;
+          const dy = d.y - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist < SHOCK_R) {
+            const p = (1 - dist / SHOCK_R) * 15;
+            const ang = Math.atan2(dy, dx);
+            d.vx += Math.cos(ang) * p;
+            d.vy += Math.sin(ang) * p;
+          }
+        }
+      }
+
+      build();
+      frame();
+      schedule();
+      animate(wrap, { opacity: [0, 1] }, { duration: 1.2, ease: "easeOut" });
+      const ro = new ResizeObserver(build);
+      ro.observe(wrap);
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("pointerdown", onDown);
+      window.addEventListener("mousedown", onDown);
+      document.documentElement.addEventListener("pointerleave", onLeave);
+      document.documentElement.addEventListener("mouseleave", onLeave);
+
+      return () => {
+        stopped = true;
+        cancelAnimationFrame(raf);
+        clearTimeout(fallbackTimer);
+        ro.disconnect();
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("pointerdown", onDown);
+        window.removeEventListener("mousedown", onDown);
+        document.documentElement.removeEventListener("pointerleave", onLeave);
+        document.documentElement.removeEventListener("mouseleave", onLeave);
+      };
+    }, []);
+
+    return html`
+      <${motion.div}
+        className="dot-field-wrap"
+        ref=${wrapRef}
+      >
+        <canvas ref=${canvasRef} />
+      <//>
+    `;
+  }
+
+  createRoot(document.getElementById("dot-field")).render(html`<${DotField} />`);
+
+  // Framer Motion entrance for the hero content
+  animate(
+    ".hero-el",
+    { opacity: [0, 1], transform: ["translateY(28px)", "translateY(0px)"] },
+    { duration: 0.8, delay: stagger(0.12), ease: [0.21, 0.6, 0.35, 1] }
+  );
+</script>
+
+</body>
+</html>
