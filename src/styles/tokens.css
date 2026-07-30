@@ -1,0 +1,186 @@
+/* ============================================================================
+   Grodivo — Design Tokens
+   The ONLY file in this project permitted to contain a raw value.
+   Everything downstream consumes these as Tailwind utilities or var() refs.
+
+   Palette provenance: sampled from grodivo.com. Navy #002774, cyan #009ADE and
+   red #E7222E are the existing brand marks — reused, not reinvented. The dark
+   ground is derived FROM the navy (never neutral black) so the surface itself
+   reads as owned rather than as a generic dark theme.
+   ========================================================================= */
+
+@theme {
+  /* ---- Color: ground -----------------------------------------------------
+     Navy-cast blacks. Hue held at brand navy, lightness stepped down. */
+  --color-ink-950: #03080f;
+  --color-ink-900: #050b1c;
+  --color-ink-800: #08132e;
+  --color-ink-700: #0c1c42;
+  --color-ink-600: #12295c;
+
+  /* ---- Color: brand ---------------------------------------------------- */
+  --color-navy: #002774;
+  --color-navy-lift: #004aad;
+  --color-cyan: #009ade;
+  --color-cyan-soft: #4fc3f0;
+  --color-signal: #e7222e;
+  /* Amber carries exactly one meaning in the apparatus: disorder — drift out
+     of true, fault seams, the dip in the value curve. Cyan is order; amber is
+     its measured opposite. */
+  --color-amber: #ffb547;
+
+  /* ---- Color: type ------------------------------------------------------
+     Muted text is navy-tinted, not neutral grey. Keeps the page one material. */
+  --color-paper: #ffffff;
+  --color-mist: #a9b6d4;
+  --color-mist-dim: #6b7ba3;
+  --color-rule: #14264f;
+  /* Muted text ON the navy ground (nav, hero subhead). Mist is tuned for the
+     ink surfaces and goes muddy on #002774; frost is the same voice re-tuned. */
+  --color-frost: #c9d7f4;
+  --color-frost-dim: #8fa6d9;
+
+  /* ---- Color: component surfaces --------------------------------------- */
+  --color-tile: #071129;
+  --color-tile-hover: #0a1838;
+
+  /* ---- Typography -------------------------------------------------------
+     Display: Archivo on its width axis — institutional, engineered, and the
+       extra width performs the brief's own subject (a gap).
+     Body: Inter — the incumbent brand face. Continuity, deliberately kept.
+     Mono: IBM Plex Mono — research-lab register for every readout and label,
+       matching the Grodivo Labs / peer-reviewed credibility claim. */
+  --font-display: "Archivo", "Helvetica Neue", sans-serif;
+  --font-body: "Inter", "Helvetica Neue", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Serif exists for one string only: the grodivo.ai wordmark, matching the
+     client's live masthead. It never sets running text. */
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+
+  /* ---- Type scale ---------------------------------------------------- */
+  /* Ceiling is set by measurement, not taste: "THE COMPANIES DON'T." must hold
+     one line in the hero column so the headline's antithesis reads as a pair.
+     At this face and tracking the string costs ~13.8x its font-size in width;
+     the hero column tops out near 669px, which puts the ceiling at 2.9rem. */
+  --text-display: clamp(1.55rem, 3.3vw, 2.9rem);
+  --text-display--line-height: 0.94;
+  --text-h2: clamp(1.6rem, 3.2vw, 2.6rem);
+  --text-h2--line-height: 1.04;
+  --text-h3: clamp(1.05rem, 1.6vw, 1.35rem);
+  --text-h3--line-height: 1.2;
+  --text-lead: clamp(1.02rem, 1.35vw, 1.2rem);
+  --text-lead--line-height: 1.5;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.55;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.3;
+  --text-micro: 0.6563rem;
+  --text-micro--line-height: 1.3;
+  --text-symbol: clamp(1.5rem, 2.6vw, 2rem);
+  --text-symbol--line-height: 1;
+  --text-readout: clamp(1.9rem, 3.4vw, 2.75rem);
+  --text-readout--line-height: 1;
+  --text-logo: clamp(1.6rem, 2.2vw, 2rem);
+  --text-logo--line-height: 1;
+  --text-nav: 1.0625rem;
+  --text-nav--line-height: 1.3;
+
+  /* ---- Tracking ---------------------------------------------------- */
+  --tracking-display: -0.035em;
+  --tracking-tight: -0.015em;
+  --tracking-label: 0.14em;
+  --tracking-micro: 0.2em;
+
+  /* ---- Spacing (4px base) ---------------------------------------------- */
+  --spacing: 0.25rem;
+  --spacing-gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --spacing-section: clamp(4.5rem, 9vw, 8.5rem);
+  --spacing-beat: clamp(2.25rem, 4vw, 3.5rem);
+
+  /* ---- Radius -----------------------------------------------------------
+     Near-square throughout. Instrument panels and periodic tiles are cut, not
+     rounded — a caliper has corners. Radius exists only to soften controls. */
+  --radius-tile: 2px;
+  --radius-panel: 4px;
+  --radius-control: 3px;
+  --radius-pill: 999px;
+  /* Collage surfaces — the floating card artwork uses soft corners like the
+     reference layout, distinct from the near-square instrument radii. */
+  --radius-card: 0.875rem;
+  --radius-chip: 0.375rem;
+
+  /* ---- Elevation --------------------------------------------------------
+     Navy glow, never black shadow. Light in this world is emitted, not cast. */
+  --shadow-panel: 0 0 0 1px var(--color-rule), 0 24px 60px -32px #001033;
+  --shadow-lift: 0 0 0 1px var(--color-navy-lift), 0 0 32px -8px #009ade4d;
+  --shadow-signal: 0 0 0 1px var(--color-signal), 0 0 28px -10px #e7222e66;
+
+  /* ---- Layout ----------------------------------------------------------
+     Measures are expressed in ch so line length tracks the type, not the box. */
+  --container-page: 84rem;
+  --measure-sub: 46ch;
+  --measure-body: 52ch;
+  --measure-headline: 20ch;
+  --measure-narrow: 26ch;
+  --rail-beat: 9rem;
+
+  /* ---- Motion -----------------------------------------------------------
+     One orchestrated load sequence, then near-silence. */
+  --ease-instrument: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-trace: 1100ms;
+  --duration-reveal: 640ms;
+  --duration-hover: 180ms;
+}
+
+/* Non-utility tokens: consumed via var() inside component CSS and SVG. */
+:root {
+  --grid-line: #0e1c3d;
+  --instrument-scan: #009ade1f;
+  /* Opaque stop for the hero field mask. An alpha channel, not a brand colour. */
+  --mask-opaque: #000;
+}
+
+/* ============================================================================
+   AlignmentHero — hero artwork tokens.
+   Structure follows the reference spec; values are re-tuned for the #00297B
+   navy world (ground and surfaces are navy shades, never neutral black).
+   ========================================================================= */
+:root {
+  --hero-bg: #001d5c;
+  --hero-surface: #0a3694;
+  --hero-surface-active: #14459f;
+  --hero-text: #f4f7fd;
+  --hero-text-dim: #c9d7f4;
+  --hero-text-muted: #8fa6d9;
+  --hero-lime: #d6f462; /* icons, gain values, active accents */
+  --hero-coral: #f0997b; /* loss values */
+  --hero-connector: #4b6cb8; /* dashed flow lines */
+  --hero-card: #ffffff; /* white insight cards */
+  --hero-card-ink: #111111;
+  --hero-card-sub: #555555;
+  --hero-card-line: #e5e5e0;
+  --hero-card-shadow: 0 10px 30px rgba(0, 13, 51, 0.45);
+  --hero-date-bg: #f2f2ef;
+  --hero-date-fg: #555555;
+  --hero-chip-lime-bg: #f1f5d8;
+  --hero-chip-lime-fg: #3a3a10;
+  --hero-chip-green-bg: #e3f5d8;
+  --hero-chip-green-fg: #1e3a10;
+  --hero-core-from: #6a66e8; /* AI core gradient */
+  --hero-core-to: #4d49c8;
+  --hero-core-ring-from: #b8d4f5;
+  --hero-core-ring-to: #4f7fd0;
+  --hero-core-glow: 0 4px 18px rgba(80, 130, 220, 0.35);
+  --hero-core-face-from: #f6faff;
+  --hero-core-face-to: #dfe9f8;
+  --hero-core-tick: rgba(90, 110, 200, 0.35);
+  --hero-diamond: #8fa6d9;
+  --hero-avatar-ink: #111111;
+}
+
+/* AlignmentHero — AI core dial detailing (reference icon) */
+:root {
+  --hero-core-glass: rgba(96, 150, 235, 0.42);
+  --hero-core-ring: rgba(120, 145, 210, 0.4);
+  --hero-core-tickstrong: rgba(100, 125, 195, 0.55);
+}

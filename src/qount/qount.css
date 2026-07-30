@@ -1,0 +1,120 @@
+/* Scoped styles for the Qount landing replica on the navy ground. Everything
+   lives under .qount so the original Grodivo styles stay untouched. */
+
+.qount {
+  background-color: #00297b;
+  color: #f2f2f2;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.qount ::selection {
+  background-color: #d6f462;
+  color: #111;
+}
+
+/* Skeleton shimmer inside the QAI Analysis card */
+@keyframes q-shimmer {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+
+.q-shimmer {
+  position: absolute;
+  inset-block: 0;
+  width: 40%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.09) 50%,
+    transparent 100%
+  );
+  animation: q-shimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Marching dashes on the connector paths */
+@keyframes q-march {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+.q-dash {
+  stroke-dasharray: 2 7;
+  animation: q-march 1.8s linear infinite;
+}
+
+/* Soft radar pulse behind the lime cube node */
+@keyframes q-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.q-pulse {
+  animation: q-pulse 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Typewriter cursor for the AI Analysis card. GSAP toggles .typing onto the
+   line currently being typed; the cursor lives in CSS so the DOM stays clean. */
+@keyframes q-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.q-type.typing::after {
+  content: "▍";
+  margin-left: 2px;
+  color: #d6f462;
+  animation: q-blink 0.9s steps(2, start) infinite;
+}
+
+/* Bolt card: hovering the artwork jiggles the bolt slightly in every
+   direction — up, down, left, right. */
+@keyframes fc-jiggle {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+  20% {
+    transform: translate(calc(-50% + 4px), calc(-50% - 5px));
+  }
+  40% {
+    transform: translate(calc(-50% - 4px), calc(-50% + 2px));
+  }
+  60% {
+    transform: translate(calc(-50% + 3px), calc(-50% + 3px));
+  }
+  80% {
+    transform: translate(calc(-50% - 3px), calc(-50% - 4px));
+  }
+}
+
+.fc-boltcard:hover .fc-bolt {
+  animation: fc-jiggle 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .q-shimmer,
+  .q-dash,
+  .q-pulse {
+    animation: none;
+  }
+
+  .q-type.typing::after {
+    content: none;
+  }
+
+  .fc-boltcard:hover .fc-bolt {
+    animation: none;
+  }
+}

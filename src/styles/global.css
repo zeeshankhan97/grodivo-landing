@@ -1,0 +1,348 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* ============================================================================
+   Named utilities
+   These exist so no component ever needs an arbitrary Tailwind value. Every
+   declaration below reads from tokens.css; nothing here introduces a new value.
+   ========================================================================= */
+
+@utility px-gutter {
+  padding-inline: var(--spacing-gutter);
+}
+@utility right-gutter {
+  right: var(--spacing-gutter);
+}
+@utility py-section {
+  padding-block: var(--spacing-section);
+}
+@utility pb-beat {
+  padding-bottom: var(--spacing-beat);
+}
+@utility mb-beat {
+  margin-bottom: var(--spacing-beat);
+}
+@utility pt-beat {
+  padding-top: var(--spacing-beat);
+}
+
+@utility dur-hover {
+  transition-duration: var(--duration-hover);
+}
+@utility dur-reveal {
+  transition-duration: var(--duration-reveal);
+}
+
+/* Semantic transitions. Each bundles its own property list, duration and easing
+   so components never hand-roll a transition or reach for arbitrary values. */
+@utility trans-cta {
+  transition-property: background-color, box-shadow, color, border-color;
+  transition-duration: var(--duration-hover);
+  transition-timing-function: var(--ease-instrument);
+}
+@utility trans-tile {
+  transition-property: transform, border-color, background-color;
+  transition-duration: var(--duration-hover);
+  transition-timing-function: var(--ease-instrument);
+}
+@utility trans-rule {
+  transition-property: width, background-color;
+  transition-duration: var(--duration-hover);
+  transition-timing-function: var(--ease-instrument);
+}
+
+@utility measure-sub {
+  max-width: var(--measure-sub);
+}
+@utility measure-body {
+  max-width: var(--measure-body);
+}
+@utility measure-headline {
+  max-width: var(--measure-headline);
+}
+@utility measure-narrow {
+  max-width: var(--measure-narrow);
+}
+
+/* Hero: the copy column is given the larger share so the wide display face can
+   set "THE COMPANIES DON'T." on one line without dropping the CTA below fold. */
+@utility grid-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem 3rem;
+  align-items: center;
+
+  @media (width >= 64rem) {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  }
+}
+
+/* Hero with working artwork: copy left, apparatus right. The art gets the
+   larger share — it is the demonstration, the copy is the caption. */
+@utility grid-hero-art {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem 3.5rem;
+  align-items: center;
+
+  @media (width >= 64rem) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  }
+}
+
+/* Apparatus vectors rotate about their own tail, not the viewBox origin. */
+.vec {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+/* Beat layout: fixed label rail + fluid content. The rail width is a token so
+   the spine aligns across all five beats. */
+@utility grid-beat {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 2.5rem;
+
+  @media (width >= 64rem) {
+    grid-template-columns: var(--rail-beat) minmax(0, 1fr);
+  }
+}
+
+/* ============================================================================
+   Base
+   ========================================================================= */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-ink-900);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-cyan);
+  color: var(--color-ink-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 3px;
+  border-radius: var(--radius-control);
+}
+
+/* ============================================================================
+   Type roles
+   Archivo carries a width axis; the display role rides it wide. This is the
+   page's typographic signature and is used at exactly two sizes, nowhere else.
+   ========================================================================= */
+
+.u-display {
+  font-family: var(--font-display);
+  font-variation-settings:
+    "wdth" 118,
+    "wght" 700;
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+.u-display-sm {
+  font-family: var(--font-display);
+  font-variation-settings:
+    "wdth" 112,
+    "wght" 650;
+  letter-spacing: var(--tracking-tight);
+}
+
+.u-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.u-micro {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Dimension names inside a periodic tile. Same mono voice as .u-micro but at
+   working tracking, because "DIFFERENTIATION" has to fit a 3-across cell. Two
+   lines are reserved so the eight tiles keep a common baseline whether the name
+   wraps or not. */
+.u-tile-name {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 500;
+  line-height: 1.25;
+  min-height: 2.5em;
+  /* Hyphenate rather than hard-break: "DIFFEREN-TIATION" reads, "DIFFERENTIAT
+     ION" does not. Relies on lang="en" being set on the document. */
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* Tabular figures everywhere a number is a measurement, so digits never jitter
+   during the count-up and columns of deltas align. */
+.u-readout {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ============================================================================
+   Surfaces
+   ========================================================================= */
+
+.u-panel {
+  background-color: var(--color-ink-800);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
+}
+
+/* Hairline field behind the hero. Two orthogonal rules at instrument pitch —
+   the page sits on graph paper, not on a gradient. */
+.u-field {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(
+    120% 90% at 62% 34%,
+    var(--mask-opaque) 0%,
+    transparent 72%
+  );
+}
+
+/* ============================================================================
+   Motion — one load sequence, one scroll reveal, nothing ambient.
+   ========================================================================= */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: var(--len, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes measure {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-10%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+}
+
+/* Resting state is VISIBLE. `backwards` fill borrows the hidden state only for
+   the duration of the delay, so if the animation never runs — throttled tab,
+   animations disabled, older engine — the content is simply there. Nothing on
+   this page is allowed to depend on an animation in order to be seen. */
+.a-rise {
+  animation: rise var(--duration-reveal) var(--ease-instrument) backwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+.a-draw {
+  stroke-dasharray: var(--len, 1200);
+  animation: draw var(--duration-trace) var(--ease-instrument) backwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+.a-measure {
+  transform-origin: var(--origin, center);
+  animation: measure 420ms var(--ease-instrument) backwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+.a-sweep {
+  animation: sweep 2.4s var(--ease-instrument) 1 forwards;
+  animation-delay: 260ms;
+}
+
+/* Scroll reveal. The idle state is scoped to `.js`, which only exists once the
+   bundle has booted — so with JS unavailable the content renders plainly rather
+   than waiting for an observer that will never run. */
+.js .a-onscroll {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-instrument),
+    transform var(--duration-reveal) var(--ease-instrument);
+  transition-delay: var(--delay, 0ms);
+}
+
+/* Released either directly, or by an ancestor beat entering the viewport — the
+   descendant form lets a whole beat's tiles stagger off one observer. */
+.a-onscroll.is-in,
+.is-in .a-onscroll {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .a-rise,
+  .a-draw,
+  .a-measure,
+  .a-sweep {
+    animation: none !important;
+    opacity: 1;
+    stroke-dashoffset: 0;
+    transform: none;
+  }
+
+  .a-sweep {
+    display: none;
+  }
+
+  .a-onscroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

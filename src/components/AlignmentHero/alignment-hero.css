@@ -1,0 +1,425 @@
+/* AlignmentHero — scoped styles (.ah- prefix). Every color reads a token from
+   tokens.css; the exact pixel values are the spec's, kept here rather than as
+   arbitrary Tailwind values. */
+
+/* The canvas carries no surface of its own — the artwork sits directly on the
+   page navy so no dark plate shows behind it. */
+.ah-canvas {
+  position: relative;
+  background: transparent;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 200px 70px 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Hover-freeze for the loops lives in GSAP (globalTimeline); the connector
+   lines are static solid strokes per the reference. */
+
+/* ---- Column 1: source carousels ---- */
+
+.ah-label {
+  font-size: 13px;
+  color: var(--hero-text-muted);
+  margin-bottom: 8px;
+}
+
+.ah-label + .ah-label-gap {
+  display: none;
+}
+
+.ah-viewport {
+  height: 172px;
+  overflow: hidden;
+}
+
+.ah-viewport + .ah-label {
+  margin-top: 18px;
+}
+
+.ah-track {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ah-source {
+  flex: 0 0 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: var(--hero-surface);
+  border-radius: 16px;
+  opacity: 0.28;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.ah-source svg {
+  color: var(--hero-lime);
+  flex: 0 0 auto;
+}
+
+.ah-source span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hero-text);
+  white-space: nowrap;
+}
+
+.ah-source.ah-active {
+  opacity: 1;
+  transform: scale(1);
+  background: var(--hero-surface-active);
+}
+
+/* ---- Column 2: connector + AI core ---- */
+
+.ah-conn {
+  position: relative;
+  height: 480px;
+}
+
+.ah-conn > svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+/* Dotted connectors: zero-length dashes + round caps read as dots; GSAP
+   marches the dash offset so the dots stream toward the core. */
+.ah-line {
+  stroke: var(--hero-connector);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 8.9;
+  fill: none;
+  opacity: 0.9;
+}
+
+.ah-core-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
+  padding: 3px;
+  background: linear-gradient(
+    135deg,
+    var(--hero-core-ring-from),
+    var(--hero-core-ring-to)
+  );
+  box-shadow: var(--hero-core-glow);
+}
+
+.ah-core-face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    160deg,
+    var(--hero-core-face-from),
+    var(--hero-core-face-to)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Instrument dial: concentric rings + the radial tick ring hugging the orb.
+   GSAP spins it slowly so the core reads as a live gauge. */
+.ah-core-dial {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Frosted half-pane over the left side, per the reference icon. Sits above
+   the dial, below the orb. */
+.ah-core-glass {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(90deg, var(--hero-core-glass), transparent);
+  border-radius: 12px 0 0 12px;
+}
+
+/* Radar ping: a ring born at the orb's edge, expanding and fading. GSAP
+   drives scale/opacity; this only sets geometry. */
+.ah-core-ping {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hero-core-from);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ah-core-orb {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    var(--hero-core-from),
+    var(--hero-core-to)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Column 3: white insight deck ---- */
+
+.ah-wstack {
+  position: relative;
+  height: 186px;
+  margin-bottom: 22px;
+}
+
+.ah-wcard {
+  position: absolute;
+  inset: 0;
+  background: var(--hero-card);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: var(--hero-card-shadow);
+  color: var(--hero-card-ink);
+}
+
+/* Static defaults mirror the GSAP initial set: w1 front, w2 tucked behind. */
+.ah-wcard.ah-w1 {
+  z-index: 2;
+}
+
+.ah-wcard.ah-w2 {
+  z-index: 1;
+  transform: translateY(-12px) scale(0.94);
+  opacity: 0.3;
+}
+
+.ah-wtop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ah-chip {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: var(--hero-chip-lime-bg);
+  color: var(--hero-chip-lime-fg);
+}
+
+.ah-chip--green {
+  background: var(--hero-chip-green-bg);
+  color: var(--hero-chip-green-fg);
+}
+
+.ah-date {
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: var(--hero-date-bg);
+  color: var(--hero-date-fg);
+}
+
+.ah-wtitle {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--hero-card-ink);
+  margin-top: 12px;
+}
+
+.ah-wsub {
+  font-size: 13px;
+  color: var(--hero-card-sub);
+  margin-top: 2px;
+}
+
+.ah-winset {
+  margin-top: 12px;
+  font-size: 13px;
+  border: 1px solid var(--hero-card-line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+  color: var(--hero-card-sub);
+}
+
+/* ---- Stat row ---- */
+
+.ah-statrow {
+  display: flex;
+  gap: 12px;
+}
+
+/* Fixed height + clipped values: cycling text must never resize or overflow
+   the card, so the composition's footprint stays constant across states. */
+.ah-stat {
+  /* positioned so the connector tail (an absolutely-positioned SVG) paints
+     UNDER these cards instead of across their text */
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  background: var(--hero-surface);
+  border-radius: 16px;
+  padding: 16px 18px;
+  height: 132px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.ah-stat-h {
+  font-size: 14px;
+  color: var(--hero-text-dim);
+}
+
+.ah-stat-v {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--hero-text);
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ah-stat-c {
+  font-size: 13px;
+  color: var(--hero-text-muted);
+  margin-top: auto;
+}
+
+.ah-avatars {
+  display: flex;
+  margin-top: 10px;
+}
+
+.ah-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--hero-surface);
+  object-fit: cover;
+  background: var(--hero-surface);
+  display: block;
+}
+
+.ah-avatar + .ah-avatar {
+  margin-left: -8px;
+}
+
+/* ---- TAP Insights ---- */
+
+.ah-insights {
+  position: relative;
+  background: var(--hero-surface);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 14px 0;
+  min-height: 118px;
+}
+
+.ah-ins-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--hero-text);
+}
+
+.ah-ins-h svg {
+  color: var(--hero-lime);
+}
+
+/* One flowing paragraph; three lines' height is reserved so the card never
+   reflows while a shorter set is mid-type. */
+.ah-ins-line {
+  display: block;
+  font-size: 13px;
+  color: var(--hero-text-dim);
+  line-height: 20px;
+  min-height: 60px;
+  margin-top: 10px;
+}
+
+@keyframes ah-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.ah-type.ah-typing::after {
+  content: "▌";
+  margin-left: 2px;
+  color: var(--hero-lime);
+  animation: ah-blink 0.9s steps(2, start) infinite;
+}
+
+/* ---- Money cards ---- */
+
+.ah-moneyrow {
+  display: flex;
+  gap: 12px;
+}
+
+.ah-money {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  background: var(--hero-surface);
+  border-radius: 16px;
+  padding: 16px 18px;
+  /* Reserves two caption lines so cycling states never change the row height. */
+  min-height: 96px;
+}
+
+.ah-money-v {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.ah-money-v.ah-loss {
+  color: var(--hero-coral);
+}
+
+.ah-money-v.ah-gain {
+  color: var(--hero-lime);
+}
+
+.ah-money-c {
+  font-size: 12px;
+  color: var(--hero-text-muted);
+  margin-top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ah-type.ah-typing::after {
+    content: none;
+  }
+}
